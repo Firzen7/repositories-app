@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,46 +39,50 @@ fun RepositoriesScreen(repos: LazyPagingItems<Repository>) {
             }
         }
 
-        /**
-         * LoadState.refresh represents initial states that occur after the first request
-         * of paginated items or after a refresh event
-         *
-         * LoadState.append represents states that occur at the end of a subsequent request
-         * of paginated items
-         */
-        val refreshLoadState = repos.loadState.refresh
+        handleInitialLoadStates(repos)
+    }
+}
 
-        when(refreshLoadState) {
-            // this happens when items are being loaded by Paging library
-            is LoadState.Loading -> {
-                // `item()` adds individual item into `LazyColumn`
-                item {
-                    // in out case, this item will take whole screen, thanks to
-                    // `Modifier.fillParentMaxSize()`
-                    LoadingItem(
-                        Modifier.fillParentMaxSize()
-                    )
-                }
+/**
+ * Handles initial states that occur after the first request of paginated items or after
+ * a refresh event.
+ *
+ * LoadState.Loading --> shows progress bar
+ * LoadState.Error   --> shows error messge with retry button
+ */
+private fun LazyListScope.handleInitialLoadStates(repos: LazyPagingItems<Repository>) {
+    val refreshLoadState = repos.loadState.refresh
+
+    when(refreshLoadState) {
+        // this happens when items are being loaded by Paging library
+        is LoadState.Loading -> {
+            // `item()` adds individual item into `LazyColumn`
+            item {
+                // in out case, this item will take whole screen, thanks to
+                // `Modifier.fillParentMaxSize()`
+                LoadingItem(
+                    Modifier.fillParentMaxSize()
+                )
             }
-
-            // this is called when initial items could not be loaded at all
-            is LoadState.Error -> {
-                // LoadState.Error carries a Throwable, so we get it here
-                val exception = refreshLoadState.error
-
-                // and here we add a fullscreen item with error message
-                item {
-                    ErrorItem(
-                        message = exception.message ?: "",
-                        modifier = Modifier.fillParentMaxSize(),
-                        // retrying initial loading is natively supported by Paging library! <3
-                        retry = { repos.retry() }
-                    )
-                }
-            }
-
-            is LoadState.NotLoading -> null
         }
+
+        // this is called when initial items could not be loaded at all
+        is LoadState.Error -> {
+            // LoadState.Error carries a Throwable, so we get it here
+            val exception = refreshLoadState.error
+
+            // and here we add a fullscreen item with error message
+            item {
+                ErrorItem(
+                    message = exception.message ?: "",
+                    modifier = Modifier.fillParentMaxSize(),
+                    // retrying initial loading is natively supported by Paging library! <3
+                    retry = { repos.retry() }
+                )
+            }
+        }
+
+        is LoadState.NotLoading -> null
     }
 }
 
