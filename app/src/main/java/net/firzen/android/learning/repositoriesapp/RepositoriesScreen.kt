@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -40,6 +41,49 @@ fun RepositoriesScreen(repos: LazyPagingItems<Repository>) {
         }
 
         handleInitialLoadStates(repos)
+        handleAppendLoadStates(repos)
+    }
+}
+
+/**
+ * Handles states that occur at the end of a subsequent request of paginated items.
+ *
+ * LoadState.Loading --> shows progress bar at the bottom of the screen
+ *                       (added as last item into LazyColumn)
+ * LoadState.Error   --> shows error message with retry button (also at the bottom of LazyColumn)
+ */
+private fun LazyListScope.handleAppendLoadStates(repos: LazyPagingItems<Repository>) {
+    val appendLoadState = repos.loadState.append
+
+    when(appendLoadState) {
+        // this happens when new items are being loaded by Paging library
+        is LoadState.Loading -> {
+            // `item()` adds individual item into `LazyColumn`
+            item {
+                LoadingItem(
+                    Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        // this is called when new items requested could not be loaded at all
+        is LoadState.Error -> {
+            // LoadState.Error carries a Throwable, so we get it here
+            val exception = appendLoadState.error
+
+            // and here we add an item with error message (not fullscreen this time - therefore
+            // using `fillMaxWidth()` Modifier
+            item {
+                ErrorItem(
+                    message = exception.message ?: "",
+                    modifier = Modifier.fillMaxWidth(),
+                    // retrying initial loading is natively supported by Paging library! <3
+                    retry = { repos.retry() }
+                )
+            }
+        }
+
+        is LoadState.NotLoading -> null
     }
 }
 
@@ -47,8 +91,8 @@ fun RepositoriesScreen(repos: LazyPagingItems<Repository>) {
  * Handles initial states that occur after the first request of paginated items or after
  * a refresh event.
  *
- * LoadState.Loading --> shows progress bar
- * LoadState.Error   --> shows error messge with retry button
+ * LoadState.Loading --> shows fullscreen progress bar
+ * LoadState.Error   --> shows fullscreen error message with retry button
  */
 private fun LazyListScope.handleInitialLoadStates(repos: LazyPagingItems<Repository>) {
     val refreshLoadState = repos.loadState.refresh
