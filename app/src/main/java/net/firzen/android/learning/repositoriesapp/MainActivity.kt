@@ -12,6 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.flowOf
 import net.firzen.android.learning.repositoriesapp.ui.theme.RepositoriesAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,10 +26,14 @@ class MainActivity : ComponentActivity() {
             RepositoriesAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val viewModel: RepositoriesViewModel = viewModel()
-                    val repos = viewModel.repositories.value
+                    val reposFlow = viewModel.repositories
+
+                    // `collectAsLazyPagingItems()` can consume and remember the paginated data
+                    // from within reposFlow
+                    val lazyRepoItems: LazyPagingItems<Repository> = reposFlow.collectAsLazyPagingItems()
 
                     Box(Modifier.padding(innerPadding)) {
-                        RepositoriesScreen(repos)
+                        RepositoriesScreen(lazyRepoItems)
                     }
                 }
             }
@@ -44,7 +52,9 @@ fun GreetingPreview() {
         Repository("fgh", "Repo 5", "This is test repository"),
         )
 
+    val pagingItems = flowOf(PagingData.from(dummyRepositories)).collectAsLazyPagingItems()
+
     RepositoriesAppTheme {
-        RepositoriesScreen(dummyRepositories)
+        RepositoriesScreen(pagingItems)
     }
 }
