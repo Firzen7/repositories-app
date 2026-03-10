@@ -46,10 +46,13 @@ dependencies {
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    // still part of Retrofit logic - GSON is used to (de)serialize DB entities
+    // still part of Retrofit logic - GSON is used to (de)serialize entities
     implementation("com.google.code.gson:gson:2.8.6")
     // this allows Retrofit to use GSON
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Jetpack Paging library
+    implementation("androidx.paging:paging-compose:3.4.1")
     
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
