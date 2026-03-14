@@ -22,8 +22,8 @@ Jetpack Paging abstracts away the principle of getting chunks (pages) of values 
 
 <img width="450" alt="Paging principle" src="images/paging_principle.png" />
 
-Paging library has manny advantages:
- - Avoidance of data request duplication—your app will request data only when needed; for example, when the user reaches the end of the list and more items must be rendered.
+Paging library has many advantages:
+ - Avoidance of data request duplication - app will request data only when needed; for example, when the user reaches the end of the list and more items must be rendered.
  - Paged data is cached in memory out of the box. During the lifetime of the app process, once a page was loaded, your app will never request it again. If you cache the paginated data in a local database, then your application will not need to request a specific page for cases such as after an app restart.
  - Paginated data is exposed as a data stream of the type that fits your need: Kotlin Flow, LiveData, or RxJava.
  - Out-of-the-box support for View System or Compose-based UI components that request data automatically when the user scrolls toward the end of the list. With such support, we don't have to know when to request new pages with data as the UI layer will trigger that for us out of the box.
