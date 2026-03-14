@@ -20,6 +20,8 @@ What is Jetpack Paging?
 
 Jetpack Paging abstracts away the principle of getting chunks (pages) of values based on which part of a list user visited in the app. It can be nicely expressed by this image:
 
+<img width="450" alt="Paging principle" src="images/paging_principle.png" />
+
 Paging library has manny advantages:
  - Avoidance of data request duplication—your app will request data only when needed; for example, when the user reaches the end of the list and more items must be rendered.
  - Paged data is cached in memory out of the box. During the lifetime of the app process, once a page was loaded, your app will never request it again. If you cache the paginated data in a local database, then your application will not need to request a specific page for cases such as after an app restart.
@@ -31,3 +33,8 @@ There are several important parts of this library:
  - `PagingSource` component: Defines the source of data for the paginated content. This object decides which page to request and loads it from your remote or local data source. If you're looking to have both a local and remote data source for your paginated content, you could use the built-in `RemoteMediator` API of the Paging library.
  - `Pager` component: Based on the defined `PagingSource` component, you can construct a `Pager` object that will expose a stream of `PagingData` objects. You can configure the `Pager` object by passing a `PagingConfig` object to its constructor and specifying the page size of your data, for example. The `PagingData` class is a wrapper over your paginated data containing a set of items part of the corresponding page. The `PagingData` object is responsible for triggering a query for a new page with items that is then forwarded to the `PagingSource` component.
  - A dedicated UI component that supports pagination: To consume the stream of paginated content, your UI must make use of dedicated UI components that can handle paginated data. If your UI is based on the traditional View System, you could use the `PagingDataAdapter` component. In this app, UI is based on Compose, and `LazyColumn` is used, since it knows how to consume paginated data.
+
+This is how _Paging_ and _Flow_ work together in this app:
+
+<img width="850" alt="Paging and Flow implementation" src="images/paging_and_flow_impl.png" />
+
