@@ -1,4 +1,4 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import net.firzen.android.learning.repositoriesapp.data.Repository
 
 
 @Composable

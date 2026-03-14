@@ -1,8 +1,7 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.data
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-
 
 interface RepositoriesApiService {
 

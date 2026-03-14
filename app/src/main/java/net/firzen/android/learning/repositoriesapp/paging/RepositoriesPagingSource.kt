@@ -1,7 +1,10 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import net.firzen.android.learning.repositoriesapp.data.Repository
+import net.firzen.android.learning.repositoriesapp.data.DependencyContainer
+import net.firzen.android.learning.repositoriesapp.data.RepositoriesApiService
 
 /**
  * Defines the source of data for the paginated content and decides which page to request.

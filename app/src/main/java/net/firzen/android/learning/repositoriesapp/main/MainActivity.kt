@@ -1,4 +1,4 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,6 +16,9 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.flowOf
+import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesScreen
+import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesViewModel
+import net.firzen.android.learning.repositoriesapp.data.Repository
 import net.firzen.android.learning.repositoriesapp.ui.theme.RepositoriesAppTheme
 
 class MainActivity : ComponentActivity() {

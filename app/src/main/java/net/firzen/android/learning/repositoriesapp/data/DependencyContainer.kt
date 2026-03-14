@@ -1,4 +1,4 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.data
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

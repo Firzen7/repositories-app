@@ -1,4 +1,4 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,10 +7,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
+import net.firzen.android.learning.repositoriesapp.paging.RepositoriesPagingSource
+import net.firzen.android.learning.repositoriesapp.data.Repository
 
 
 class RepositoriesViewModel(private val reposPagingSource:
-                            RepositoriesPagingSource = RepositoriesPagingSource()) : ViewModel() {
+                            RepositoriesPagingSource = RepositoriesPagingSource()
+) : ViewModel() {
 
     val repositories: Flow<PagingData<Repository>> =
         Pager(

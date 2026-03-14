@@ -1,4 +1,4 @@
-package net.firzen.android.learning.repositoriesapp
+package net.firzen.android.learning.repositoriesapp.data
 
 import com.google.gson.annotations.SerializedName
 
