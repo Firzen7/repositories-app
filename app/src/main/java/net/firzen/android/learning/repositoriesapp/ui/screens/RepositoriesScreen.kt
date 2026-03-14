@@ -16,24 +16,36 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import net.firzen.android.learning.repositoriesapp.data.Repository
+import net.firzen.android.learning.repositoriesapp.domain.CustomCountdown
+import timber.log.Timber
 
 
 @Composable
-fun RepositoriesScreen(repos: LazyPagingItems<Repository>) {
+fun RepositoriesScreen(repos: LazyPagingItems<Repository>,
+                       timerText: String,
+                       getTimer: () -> CustomCountdown,
+                       onPauseTimer: () -> Unit) {
+
     LazyColumn(
         contentPadding = PaddingValues(
             vertical = 8.dp,
             horizontal = 8.dp
         )
     ) {
+        item {
+            CountdownItem(timerText, getTimer, onPauseTimer)
+        }
+
         items(repos.itemCount) { index ->
             val repo = repos[index]
             if (repo != null) {
@@ -44,6 +56,37 @@ fun RepositoriesScreen(repos: LazyPagingItems<Repository>) {
         handleInitialLoadStates(repos)
         handleAppendLoadStates(repos)
     }
+}
+
+@Composable
+private fun CountdownItem(timerText: String,
+                          getTimer: () -> CustomCountdown,
+                          onPauseTimer: () -> Unit) {
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycle = lifecycleOwner.lifecycle
+
+    DisposableEffect(key1 = lifecycleOwner) {
+        // called when `CountdownItem` is visible on screen (that also means user needs to scroll
+        // to the very top!) --> called when composable enters composition
+        Timber.i("Observer added")
+
+        // this causes the timer to be informed about `onResume()` being called, which also
+        // causes the timer to either start or continue
+        lifecycle.addObserver(getTimer())
+
+        onDispose {
+            // called whenever the `CountdownItem` is NOT visible on screen - even just scrolling
+            // down will trigger this block --> called when composable leaves composition
+
+            Timber.i("Observer removed")
+            onPauseTimer()    // timer is paused when `CountdownItem` is not visible
+            lifecycle.removeObserver(getTimer())
+        }
+    }
+
+    // shows message produced by the timer
+    Text(timerText)
 }
 
 /**

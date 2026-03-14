@@ -19,11 +19,16 @@ import kotlinx.coroutines.flow.flowOf
 import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesScreen
 import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesViewModel
 import net.firzen.android.learning.repositoriesapp.data.Repository
+import net.firzen.android.learning.repositoriesapp.domain.CustomCountdown
 import net.firzen.android.learning.repositoriesapp.ui.theme.RepositoriesAppTheme
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Timber.plant(Timber.DebugTree())
+
         enableEdgeToEdge()
         setContent {
             RepositoriesAppTheme {
@@ -35,8 +40,16 @@ class MainActivity : ComponentActivity() {
                     // from within reposFlow
                     val lazyRepoItems: LazyPagingItems<Repository> = reposFlow.collectAsLazyPagingItems()
 
+                    // here we get current description of the timer
+                    val timerText = viewModel.timerState.value
+
                     Box(Modifier.padding(innerPadding)) {
-                        RepositoriesScreen(lazyRepoItems)
+                        RepositoriesScreen(
+                            repos = lazyRepoItems,
+                            timerText = timerText,
+                            getTimer = { viewModel.timer },
+                            onPauseTimer = { viewModel.timer.stop() }
+                        )
                     }
                 }
             }
@@ -58,6 +71,11 @@ fun GreetingPreview() {
     val pagingItems = flowOf(PagingData.from(dummyRepositories)).collectAsLazyPagingItems()
 
     RepositoriesAppTheme {
-        RepositoriesScreen(pagingItems)
+        RepositoriesScreen(
+            repos = pagingItems,
+            timerText = "Test countdown desc",
+            getTimer = { CustomCountdown({}, {}) },
+            onPauseTimer = {}
+        )
     }
 }

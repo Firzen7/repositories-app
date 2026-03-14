@@ -53,7 +53,10 @@ dependencies {
 
     // Jetpack Paging library
     implementation("androidx.paging:paging-compose:3.4.1")
-    
+
+    // Timber logging, https://github.com/JakeWharton/timber, Apache 2.0 license
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
