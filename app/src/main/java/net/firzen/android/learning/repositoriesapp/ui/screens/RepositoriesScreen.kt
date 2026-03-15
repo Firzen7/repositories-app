@@ -4,29 +4,37 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.flowOf
 import net.firzen.android.learning.repositoriesapp.data.Repository
 import net.firzen.android.learning.repositoriesapp.domain.CustomCountdown
+import net.firzen.android.learning.repositoriesapp.ui.theme.RepositoriesAppTheme
 import timber.log.Timber
 
 
@@ -36,25 +44,38 @@ fun RepositoriesScreen(repos: LazyPagingItems<Repository>,
                        getTimer: () -> CustomCountdown,
                        onPauseTimer: () -> Unit) {
 
-    LazyColumn(
-        contentPadding = PaddingValues(
-            vertical = 8.dp,
-            horizontal = 8.dp
+    Column {
+
+        Spacer(Modifier.height(10.dp))
+
+        Text(
+            "Most popular Github repos",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            color = MaterialTheme.colorScheme.primary
         )
-    ) {
-        item {
-            CountdownItem(timerText, getTimer, onPauseTimer)
-        }
 
-        items(repos.itemCount) { index ->
-            val repo = repos[index]
-            if (repo != null) {
-                RepositoryItem(index, repo)
+        LazyColumn(
+            contentPadding = PaddingValues(
+                vertical = 8.dp,
+                horizontal = 8.dp
+            )
+        ) {
+            item {
+                CountdownItem(timerText, getTimer, onPauseTimer)
             }
-        }
 
-        handleInitialLoadStates(repos)
-        handleAppendLoadStates(repos)
+            items(repos.itemCount) { index ->
+                val repo = repos[index]
+                if (repo != null) {
+                    RepositoryItem(index, repo)
+                }
+            }
+
+            handleInitialLoadStates(repos)
+            handleAppendLoadStates(repos)
+        }
     }
 }
 
@@ -86,7 +107,7 @@ private fun CountdownItem(timerText: String,
     }
 
     // shows message produced by the timer
-    Text(timerText)
+    Text(timerText, color = MaterialTheme.colorScheme.secondary)
 }
 
 /**
@@ -211,30 +232,64 @@ fun LoadingItem(modifier: Modifier) {
 
 @Composable
 fun RepositoryItem(index: Int, item: Repository) {
-    Card(
+    OutlinedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.padding(8.dp).height(120.dp)
+        modifier = Modifier.padding(8.dp).height(120.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        border = CardDefaults.outlinedCardBorder().copy(
+            brush = SolidColor(MaterialTheme.colorScheme.outline)
+        ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(8.dp)
         ) {
+            // repository id
             Text(
                 text = index.toString(),
                 style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .weight(0.2f)
                     .padding(8.dp))
+
             Column(modifier = Modifier.weight(0.8f)) {
+                // repository name
                 Text(
                     text = item.name,
-                    style = MaterialTheme.typography.titleLarge)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary)
+                // repository description
                 Text(
                     text = item.description,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 3)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RepositoriesScreenPreview() {
+    val dummyRepositories = listOf(
+        Repository("abc", "Repo 1", "This is test repository"),
+        Repository("k6c", "Repo 2", "This is test repository"),
+        Repository("7hc", "Repo 3", "This is test repository"),
+        Repository("54g", "Repo 4", "This is test repository"),
+        Repository("fgh", "Repo 5", "This is test repository"),
+    )
+
+    val pagingItems = flowOf(PagingData.from(dummyRepositories)).collectAsLazyPagingItems()
+
+    RepositoriesAppTheme {
+        RepositoriesScreen(
+            repos = pagingItems,
+            timerText = "Test countdown desc",
+            getTimer = { CustomCountdown({}, {}) },
+            onPauseTimer = {}
+        )
     }
 }

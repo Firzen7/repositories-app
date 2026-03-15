@@ -12,14 +12,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import kotlinx.coroutines.flow.flowOf
 import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesScreen
 import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesViewModel
 import net.firzen.android.learning.repositoriesapp.data.Repository
-import net.firzen.android.learning.repositoriesapp.domain.CustomCountdown
+import net.firzen.android.learning.repositoriesapp.ui.screens.RepositoriesScreenPreview
 import net.firzen.android.learning.repositoriesapp.ui.theme.RepositoriesAppTheme
 import timber.log.Timber
 
@@ -59,23 +57,6 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    val dummyRepositories = listOf(
-        Repository("abc", "Repo 1", "This is test repository"),
-        Repository("k6c", "Repo 2", "This is test repository"),
-        Repository("7hc", "Repo 3", "This is test repository"),
-        Repository("54g", "Repo 4", "This is test repository"),
-        Repository("fgh", "Repo 5", "This is test repository"),
-        )
-
-    val pagingItems = flowOf(PagingData.from(dummyRepositories)).collectAsLazyPagingItems()
-
-    RepositoriesAppTheme {
-        RepositoriesScreen(
-            repos = pagingItems,
-            timerText = "Test countdown desc",
-            getTimer = { CustomCountdown({}, {}) },
-            onPauseTimer = {}
-        )
-    }
+fun MainActivityPreview() {
+    RepositoriesScreenPreview()
 }
